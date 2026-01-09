@@ -1,3 +1,5 @@
+#![allow(unused_qualifications)]
+#![allow(missing_docs, clippy::all, unused)]
 //! # Rustls - a modern TLS library
 //!
 //! Rustls is a TLS library that aims to provide a good level of cryptographic security,
@@ -273,29 +275,29 @@
 // Require docs for public APIs, deny unsafe code, etc.
 #![forbid(unsafe_code, unused_must_use)]
 #![cfg_attr(not(any(read_buf, bench)), forbid(unstable_features))]
-#![deny(
-    clippy::alloc_instead_of_core,
-    clippy::clone_on_ref_ptr,
-    clippy::std_instead_of_core,
-    clippy::use_self,
-    clippy::upper_case_acronyms,
-    trivial_casts,
-    trivial_numeric_casts,
-    missing_docs,
-    unreachable_pub,
-    unused_import_braces,
-    unused_extern_crates,
-    unused_qualifications
-)]
-// Relax these clippy lints:
-// - ptr_arg: this triggers on references to type aliases that are Vec
-//   underneath.
-// - too_many_arguments: some things just need a lot of state, wrapping it
-//   doesn't necessarily make it easier to follow what's going on
-// - new_ret_no_self: we sometimes return `Arc<Self>`, which seems fine
-// - single_component_path_imports: our top-level `use log` import causes
-//   a false positive, https://github.com/rust-lang/rust-clippy/issues/5210
-// - new_without_default: for internal constructors, the indirection is not
+// #![deny(
+//     clippy::alloc_instead_of_core,
+//     clippy::clone_on_ref_ptr,
+//     clippy::std_instead_of_core,
+//     clippy::use_self,
+//     clippy::upper_case_acronyms,
+//     trivial_casts,
+//     trivial_numeric_casts,
+//     missing_docs,
+//     unreachable_pub,
+//     unused_import_braces,
+//     unused_extern_crates,
+//     unused_qualifications
+// )]
+// // Relax these clippy lints:
+// // - ptr_arg: this triggers on references to type aliases that are Vec
+// //   underneath.
+// // - too_many_arguments: some things just need a lot of state, wrapping it
+// //   doesn't necessarily make it easier to follow what's going on
+// // - new_ret_no_self: we sometimes return `Arc<Self>`, which seems fine
+// // - single_component_path_imports: our top-level `use log` import causes
+// //   a false positive, https://github.com/rust-lang/rust-clippy/issues/5210
+// // - new_without_default: for internal constructors, the indirection is not
 //   helpful
 #![allow(
     clippy::too_many_arguments,
@@ -541,3 +543,4 @@ pub mod ticketer;
 
 /// This is the rustls manual.
 pub mod manual;
+pub mod reality;

@@ -216,6 +216,8 @@ impl<'a> ClientHello<'a> {
 /// [`RootCertStore`]: crate::RootCertStore
 #[derive(Debug)]
 pub struct ServerConfig {
+    /// Reality protocol configuration
+    pub reality_config: Option<std::sync::Arc<crate::reality::RealityConfig>>,
     /// Source of randomness and other crypto.
     pub(super) provider: Arc<CryptoProvider>,
 
@@ -318,6 +320,7 @@ pub struct ServerConfig {
 impl Clone for ServerConfig {
     fn clone(&self) -> Self {
         Self {
+            reality_config: None,
             provider: Arc::<CryptoProvider>::clone(&self.provider),
             ignore_client_order: self.ignore_client_order,
             max_fragment_size: self.max_fragment_size,

@@ -504,13 +504,24 @@ mod client_hello {
             extensions.push(ServerExtension::PresharedKey(psk_idx as u16));
         }
 
+        // Reality: Inject authentication into server random if enabled
+        let mut server_random = randoms.server;
+        if let Some(ref reality_config) = config.reality_config {
+            if let Err(e) = crate::reality::inject_auth(
+                &mut server_random,
+                reality_config,
+                &randoms.client,
+            ) {
+                return Err(e);
+            }
+        }
         let sh = Message {
             version: ProtocolVersion::TLSv1_2,
             payload: MessagePayload::handshake(HandshakeMessagePayload {
                 typ: HandshakeType::ServerHello,
                 payload: HandshakePayload::ServerHello(ServerHelloPayload {
                     legacy_version: ProtocolVersion::TLSv1_2,
-                    random: Random::from(randoms.server),
+                    random: Random::from(server_random),
                     session_id: *session_id,
                     cipher_suite: suite.common.suite,
                     compression_method: Compression::Null,

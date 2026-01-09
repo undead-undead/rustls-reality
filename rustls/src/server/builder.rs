@@ -110,6 +110,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
     /// Sets a custom [`ResolvesServerCert`].
     pub fn with_cert_resolver(self, cert_resolver: Arc<dyn ResolvesServerCert>) -> ServerConfig {
         ServerConfig {
+            reality_config: None,
             provider: self.state.provider,
             verifier: self.state.verifier,
             cert_resolver,
