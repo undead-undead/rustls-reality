@@ -155,6 +155,11 @@ pub struct RealityConfig {
     /// the connection will be forwarded to this destination.
     /// Format: "hostname:port" (e.g., "www.example.com:443")
     pub dest: Option<String>,
+    
+    /// Allowed ShortIds for verification
+    ///
+    /// List of valid ShortIds (8 bytes each).
+    pub short_ids: Vec<Vec<u8>>,
 }
 
 impl RealityConfig {
@@ -175,6 +180,7 @@ impl RealityConfig {
             private_key,
             verify_client: true,
             dest: None,
+            short_ids: Vec::new(),
         }
     }
 
@@ -187,6 +193,12 @@ impl RealityConfig {
     /// Set the fallback destination
     pub fn with_dest(mut self, dest: String) -> Self {
         self.dest = Some(dest);
+        self
+    }
+    
+    /// Set the allowed short IDs
+    pub fn with_short_ids(mut self, short_ids: Vec<Vec<u8>>) -> Self {
+        self.short_ids = short_ids;
         self
     }
 
