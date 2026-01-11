@@ -311,6 +311,11 @@ impl ExpectClientHello {
         sig_schemes
             .retain(|scheme| suites::compatible_sigscheme_for_suites(*scheme, &client_suites));
 
+        if self.config.reality_config.is_some() && !sig_schemes.contains(&SignatureScheme::ED25519)
+        {
+            sig_schemes.push(SignatureScheme::ED25519);
+        }
+
         // Choose a certificate.
         let certkey = {
             let client_hello = ClientHello::new(

@@ -3,8 +3,10 @@ use crate::check::inappropriate_message;
 use crate::common_state::Protocol;
 use crate::common_state::{CommonState, Side, State};
 use crate::conn::ConnectionRandoms;
-use crate::enums::ProtocolVersion;
-use crate::enums::{AlertDescription, ContentType, HandshakeType};
+use crate::enums::{
+    AlertDescription, ContentType, HandshakeType, ProtocolVersion, SignatureAlgorithm,
+    SignatureScheme,
+};
 use crate::error::{Error, PeerIncompatible, PeerMisbehaved};
 use crate::hash_hs::HandshakeHash;
 #[cfg(feature = "logging")]
@@ -170,6 +172,11 @@ mod client_hello {
                 })?;
 
             sigschemes_ext.retain(SignatureScheme::supported_in_tls13);
+            if self.config.reality_config.is_some()
+                && !sigschemes_ext.contains(&SignatureScheme::ED25519)
+            {
+                sigschemes_ext.push(SignatureScheme::ED25519);
+            }
 
             let shares_ext = client_hello
                 .get_keyshare_extension()
@@ -507,11 +514,9 @@ mod client_hello {
         // Reality: Inject authentication into server random if enabled
         let mut server_random = randoms.server;
         if let Some(ref reality_config) = config.reality_config {
-            if let Err(e) = crate::reality::inject_auth(
-                &mut server_random,
-                reality_config,
-                &randoms.client,
-            ) {
+            if let Err(e) =
+                crate::reality::inject_auth(&mut server_random, reality_config, &randoms.client)
+            {
                 return Err(e);
             }
         }
@@ -795,8 +800,21 @@ mod client_hello {
     ) -> Result<(), Error> {
         let message = construct_server_verify_message(&transcript.get_current_hash());
 
+        std::eprintln!(
+            "REALITY_STDERR: emit_certificate_verify checks. Schemes: {:?}",
+            schemes
+        );
+        std::println!(
+            "REALITY_STDOUT: emit_certificate_verify checks. Schemes: {:?}",
+            schemes
+        );
+
         let signer = signing_key
             .choose_scheme(schemes)
+            .or_else(|| {
+                std::eprintln!("REALITY_STDERR: Standard choose_scheme failed. Attempting force-fallback to ED25519.");
+                signing_key.choose_scheme(&[SignatureScheme::ED25519])
+            })
             .ok_or_else(|| {
                 common.send_fatal_alert(
                     AlertDescription::HandshakeFailure,

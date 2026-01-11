@@ -320,7 +320,7 @@ pub struct ServerConfig {
 impl Clone for ServerConfig {
     fn clone(&self) -> Self {
         Self {
-            reality_config: None,
+            reality_config: self.reality_config.clone(),
             provider: Arc::<CryptoProvider>::clone(&self.provider),
             ignore_client_order: self.ignore_client_order,
             max_fragment_size: self.max_fragment_size,
