@@ -3,7 +3,15 @@
 </p>
 
 <p align="center">
-Rustls is a modern TLS library written in Rust.
+# Rustls with Reality Support
+
+> **⚠️ Note:** This is a modified version of [Rustls](https://github.com/rustls/rustls) specifically patched to support the **Reality Protocol** (Xray-core). It exposes internal handshake states required for Reality's man-in-the-middle key exchange.
+>
+> **Do not use this for general TLS purposes.** For standard usage, please use the official `rustls` crate.
+
+---
+
+# Rustls: a modern TLS library in Rustten in Rust.
 </p>
 
 # Status
