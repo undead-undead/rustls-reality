@@ -1,66 +1,34 @@
 [package]
-name = "rustls"
-version = "0.22.4"
+name = "rustls-reality"
+version = "0.22.0" # keeping version or bumping it, matters less now that name is unique
 edition = "2021"
-rust-version = "1.61"
-license = "Apache-2.0 OR ISC OR MIT"
-readme = "../README.md"
-description = "Rustls is a modern TLS library written in Rust."
-homepage = "https://github.com/rustls/rustls"
 repository = "https://github.com/rustls/rustls"
-categories = ["network-programming", "cryptography"]
-autobenches = false
-build = "build.rs"
-
-[build-dependencies]
-rustversion = { version = "1.0.6", optional = true }
+readme = "../README.md"
+description = "Rustls with Reality implementation"
+license = "Apache-2.0 OR ISC OR MIT"
 
 [dependencies]
-aws-lc-rs = { version = "1.5", optional = true }
 log = { version = "0.4.4", optional = true }
-ring = { version = "0.17", optional = true }
-subtle = { version = "2.5.0", default-features = false }
-webpki = { package = "rustls-webpki", version = "0.102", features = ["std"], default-features = false }
-pki-types = { package = "rustls-pki-types", version = "1", features = ["std"] }
-zeroize = "1.6.0"
+ring = "0.17"
+subtle = "2.5.0"
+pki-types = { package = "rustls-pki-types", version = "1", features = ["alloc"] }
+webpki = { package = "rustls-webpki", version = "0.102", features = ["alloc", "std"] }
+zeroize = "1.7"
+hmac = "0.12"
+sha2 = "0.10"
+chacha20poly1305 = "0.10"
+hkdf = "0.12"
+curve25519-dalek = "4.1"
 
 [features]
-default = ["logging", "ring", "tls12"]
+default = ["logging", "std", "tls12"]
 logging = ["log"]
-aws_lc_rs = ["dep:aws-lc-rs", "webpki/aws_lc_rs"]
-ring = ["dep:ring", "webpki/ring"]
+std = ["webpki/std", "pki-types/std"]
+dangerous_configuration = [] # Feature needed by xray-lite
+read_buf = ["rustls-pki-types/std"] # Feature needed by xray-lite
 tls12 = []
-read_buf = ["rustversion"]
+secret_extraction = []
+quic = []
 
 [dev-dependencies]
-base64 = "0.21"
-bencher = "0.1.5"
 env_logger = "0.10"
-log = "0.4.4"
-rustls-pemfile = "2"
-webpki-roots = "0.26"
-
-[[example]]
-name = "bogo_shim"
-path = "examples/internal/bogo_shim.rs"
-required-features = ["tls12"]
-
-[[example]]
-name = "bench"
-path = "examples/internal/bench.rs"
-
-[[bench]]
-name = "benchmarks"
-path = "benches/benchmarks.rs"
-harness = false
-required-features = ["ring"]
-
-[package.metadata.docs.rs]
-all-features = true
-rustdoc-args = ["--cfg", "docsrs"]
-
-[package.metadata.cargo_check_external_types]
-allowed_external_types = [
-    "rustls_pki_types::*",
-]
-ring = "0.16"
